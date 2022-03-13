@@ -1,11 +1,11 @@
 {
-  "name": "angular-electron",
-  "version": "10.5.0",
-  "description": "Angular 13 with Electron 17 (Typescript + SASS + Hot Reload)",
+  "name": "scheduler-manager",
+  "version": "1.0.0",
+  "description": "Angular 13 with Electron 17 - Scheduler Manager",
   "homepage": "https://github.com/maximegris/angular-electron",
   "author": {
-    "name": "Maxime GRIS",
-    "email": "maxime.gris@gmail.com"
+    "name": "EAS3",
+    "email": "jean-louis.th.pro@hotmail.com"
   },
   "keywords": [
     "angular",
@@ -27,7 +27,7 @@
     "postinstall": "electron-builder install-app-deps",
     "ng": "ng",
     "start": "npm-run-all -p electron:serve ng:serve",
-    "ng:serve": "ng serve -c web -o",
+    "ng:serve": "ng serve -c web",
     "build": "npm run electron:serve-tsc && ng build --base-href ./",
     "build:dev": "npm run build -- -c dev",
     "build:prod": "npm run build -- -c production",
@@ -53,11 +53,16 @@
     "@angular/platform-browser": "13.2.4",
     "@angular/platform-browser-dynamic": "13.2.4",
     "@angular/router": "13.2.4",
+    "@electron/remote": "2.0.7",
     "@fullcalendar/angular": "5.10.2",
     "@fullcalendar/daygrid": "5.10.1",
     "@fullcalendar/interaction": "5.10.1",
+    "ngx-electron": "2.2.0",
     "rxjs": "7.5.0",
+    "sqlite3": "5.0.2",
+    "sweetalert2": "11.4.4",
     "tslib": "^2.1.0",
+    "typeorm": "0.2.45",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
