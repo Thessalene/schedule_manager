@@ -3,9 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { AuthentificationService } from '../core/services/auth.service';
+import { Authentification } from '../core/models/auth.schema';
 import { DatePipe } from '@angular/common';
 import { FORMAT_yyyy_MM_dd } from '../core/constants';
-import { Authentification } from '../core/models/auth.schema';
 
 @Component({
   selector: 'app-auth',
@@ -42,12 +42,13 @@ export class AuthComponent implements OnInit {
   }
 
   createIdentifiant(){
-    this.addAuthentification("admin972easapp", true, 1)
-    this.addAuthentification("normal972easapp", false, 2)
+    // If there is no identifiant in DB 
+    this.addAuthentification("admin972", true, 1)
+    this.addAuthentification("normal972", false, 2)
   }
 
   checkAsMaster() {
-    console.log("Log as master")
+    console.log("[INFO] Check master user")
     var auth = this.checkAuth()
 
     if (auth == undefined) {
@@ -63,19 +64,20 @@ export class AuthComponent implements OnInit {
 
   }
   showAuthError() {
+    // TODO
     throw new Error('Method not implemented.');
   }
 
   getAllAUth() {
     this.authService.getAllAuth().subscribe((authRetrieved) => {
-      console.log("ALL AUTH : ", authRetrieved)
+      console.log("[INFO] All authentifications in database : ", authRetrieved)
     });
   }
 
   checkAuth(): Authentification {
     var authRetrieve: Authentification
-    this.authService.getAuthByIdentifiant(this.authForm.get('identifiant').value).subscribe((myAuth) => {
-      authRetrieve = myAuth
+    this.authService.getAuthByIdentifiant(this.authForm.get('identifiant').value).subscribe((authRetrieved) => {
+      authRetrieve = authRetrieved
     });
     return authRetrieve
   }
@@ -88,14 +90,8 @@ export class AuthComponent implements OnInit {
     })
   }
 
-  btnClick() {
-    console.log("CLICK ON VERS HOME")
-    this.goToHomePage()
-    //this.router.navigate(['/home']);
-  }
-
   displayAddIdentifiantForm() {
-    console.log("IS A MASTER PASSWORD")
+    console.log("[INFO] Is a master password")
     this.authForm.reset()
     this.masterAddIdentifiant = true
   }
@@ -105,13 +101,12 @@ export class AuthComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log("Identifiant " + this.authForm.get('identifiant').value);
+    console.log("[INFO] Adding identifiant " + this.authForm.get('identifiant').value + " ...");
+
     if(this.masterAddIdentifiant){
-      console.log("ADD identifiant")
       if(this.authForm.get('identifiant').value != ""){
-        console.log("Before adding")
         this.addAuthentification(this.authForm.get('identifiant').value, false, null)
-        this.alertWithSuccess("Le nouvel identifiant a bien été créé.")
+        this.displaySuccessAlert("Le nouvel identifiant a bien été créé.")
         this.masterAddIdentifiant = false
         this.showError = false
         this.authForm.reset()
@@ -121,39 +116,39 @@ export class AuthComponent implements OnInit {
     } else {
       console.log(this.authForm);
       var auth = this.checkAuth()
-      console.log("AUTH RETRIEVED : ", JSON.stringify(auth))
+      console.log("[INFO] Authentification retrieved : ", JSON.stringify(auth))
   
       if (auth === undefined) {
-        console.log("IS UNDEFINED ")
+        console.log("[ERROR] Authentification is undefined.")
         this.showError = true
       } else {
         this.showError = false
         this.goToHomePage()
       }
-    }
-    
+    } 
   }
-  cancel(){
+
+  resetAuthentification(){
     this.masterAddIdentifiant = false
     this.authForm.reset()
   }
 
-  alertWithSuccess(message) {
+  displaySuccessAlert(message) {
     Swal.fire('Ajout d\'un nouvel identifiant', message, 'success')
   }
 
   addIdentifiant(authToAdd: Authentification) {
     this.authService.addAuthentification(authToAdd).subscribe(
       (auth) => {
-        console.log("AUTH ADDED ", JSON.stringify(auth))
-        this.getAllAUth()
+        console.log("[INFO] Authentification added : ", JSON.stringify(auth))
       },
-      (error) => this.errorAlert()
+      (error) => this.displayErrorAlert(error)
     );
   }
 
 
-  errorAlert() {
+  displayErrorAlert(error) {
+    console.log("[ERROR]", error)
     Swal.fire({
       icon: 'error',
       title: 'Echec de l\'ajout d\'identifiant',
@@ -161,8 +156,4 @@ export class AuthComponent implements OnInit {
       footer: '<a href>Contacter le service</a>'
     })
   }
-
-
 }
-
-

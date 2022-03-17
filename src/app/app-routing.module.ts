@@ -1,15 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PageNotFoundComponent } from './shared/components';
+import { AuthComponent } from './auth/auth.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
 
-import { HomeRoutingModule } from './home/home-routing.module';
-import { DetailRoutingModule } from './detail/detail-routing.module';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
+    redirectTo: '/auth', 
+    pathMatch: 'full' 
+  },
+  {
+    path: 'auth',
+    component : AuthComponent
   },
   {
     path: '**',
@@ -19,10 +23,10 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
-    HomeRoutingModule,
-    DetailRoutingModule
+    BrowserAnimationsModule,
+    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy', /*enableTracing:true,*/ useHash: true}),
   ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+

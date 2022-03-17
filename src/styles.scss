@@ -1,50 +1,173 @@
 /* You can add global styles to this file, and also import other style files */
-html, body {
+/*@import "~bootstrap/dist/css/bootstrap.css";
+@import "~@ng-select/ng-select/themes/material.theme.css";
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300&display=swap");
+@import "~bootstrap/scss/bootstrap";
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
-
   height: 100%;
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.mat-flat-button {
+  background-color: transparent;
+}
+
+.modal-title {
+  color: cadetblue;
+  font-size: 20px;
+}
+
+.mat-button-focus-overlay {
+  background-color: transparent !important;
+}
+
 /* CAN (MUST) BE REMOVED ! Sample Global style */
 .container {
-  height: 100%;
+  height: 95vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  background: url(./assets/background.jpg) no-repeat center fixed;
   -webkit-background-size: cover; /* pour anciens Chrome et Safari */
   background-size: cover; /* version standardisée */
 
   .title {
-    color: white;
+    color: rgba(218, 143, 5, 0.753);
     margin: 0;
     padding: 50px 20px;
   }
 
   a {
-    color: #fff !important;
-    text-transform: uppercase;
+    color: transparent !important;
+    //text-transform: uppercase;
     text-decoration: none;
-    background: #ed3330;
-    padding: 20px;
+    padding: 10px;
     border-radius: 5px;
     display: inline-block;
     border: none;
     transition: all 0.4s ease 0s;
 
     &:hover {
-      background: #fff;
-      color: #ed3330 !important;
+      color: #5388d8 !important;
       letter-spacing: 1px;
-      -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
-      -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
-      box-shadow: 5px 40px -10px rgba(0,0,0,0.57);
+      -webkit-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+      -moz-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+      box-shadow: 5px 40px -10px rgba(0, 0, 0, 0.57);
+      transition: all 0.4s ease 0s;
+    }
+  }
+
+  .masterButton {
+    color: transparent !important;
+    background-color: transparent;
+    //text-transform: uppercase;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    display: inline-block;
+    border: none;
+    transition: all 0.4s ease 0s;
+
+    &:hover {
+      color: #5388d8 !important;
+      letter-spacing: 1px;
+      -webkit-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+      -moz-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+      box-shadow: 5px 40px -10px rgba(0, 0, 0, 0.57);
       transition: all 0.4s ease 0s;
     }
   }
 }
 
+.error-div {
+  margin-top: 2%;
+  background-color: #f5ad6e;
+  color: rgb(49, 48, 48);
+  text-align: center;
+}
+
+.btn-info {
+  border-radius: 20px;
+}
+
+:not(i) {
+  font-family: "Nunito", sans-serif;
+}
+
+body app-root app-navigation mat-sidenav-container mat-sidenav {
+  visibility: hidden;
+}
+
+
+// @media print {
+//   .mat-drawer-content{
+//     display: none;
+//   }
+
+//   mat-sidenav {
+//     visibility: collapse;
+
+//   }
+
+//   @page {
+//   size: A4;   /* auto is the initial value */
+
+//     /* Chrome sets own margins, we change these printer settings */
+//   margin: 0mm 0mm 0mm 0mm;
+// }
+//   .printMe {
+//     visibility: visible
+//   }
+// }
+
+// @media print
+
+// {
+// body * { visibility: hidden; }
+// .div2 * { visibility: visible; }
+// .div2 { position: absolute; top: 40px; left: 30px; }
+
+// .mat-drawer-content{
+//   display: none;
+// }
+
+// mat-sidenav {
+//   visibility: collapse;
+
+// }
+//}
+
+
+/* Styles for tab labels */
+.mat-tab-label {
+  min-width: 25px !important;
+  padding: 5px;
+  background-color: transparent;
+  color: rgb(87, 85, 85);
+  font-weight: 700;
+}
+
+/* Styles for the active tab label */
+.mat-tab-label.mat-tab-label-active {
+  min-width: 25px !important;
+  padding: 5px;
+  background-color: transparent;
+  color: black;
+  font-weight: 700;
+}
+
+/* Styles for the ink bar */
+.mat-ink-bar {
+  background-color: orange;
+}

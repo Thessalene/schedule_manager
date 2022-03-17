@@ -28,6 +28,11 @@
               "src/favicon.ico",
               "src/assets"
             ],
+            "allowedCommonJsDependencies": [
+              "buffer/",
+              "debug",
+              "sha.js"
+           ],
             "styles": [
               "src/styles.scss"
             ],

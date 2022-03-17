@@ -12,20 +12,22 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { HomeModule } from './home/home.module';
-import { DetailModule } from './detail/detail.module';
 
 import { AppComponent } from './app.component';
 import { LOCALE_ID } from '@angular/core';
 import { DatePipe, registerLocaleData } from '@angular/common';
 
 import localeFr from '@angular/common/locales/fr';
+import { AuthComponent } from './auth/auth.component';
+import { AuthentificationService } from './core/services/auth.service';
+import { ElectronService } from 'ngx-electron';
 
 registerLocaleData(localeFr);
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, AuthComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -33,7 +35,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
     CoreModule,
     SharedModule,
     HomeModule,
-    DetailModule,
     AppRoutingModule,
     TranslateModule.forRoot({
       loader: {
@@ -43,7 +44,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
       }
     })
   ],
-  providers: [DatePipe, { provide: LOCALE_ID, useValue: "fr-FR" }],
+  providers: [ AuthentificationService, ElectronService, DatePipe, { provide: LOCALE_ID, useValue: "fr-FR" }],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

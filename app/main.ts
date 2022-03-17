@@ -12,6 +12,8 @@ let authRepo = null
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
 
+app.disableHardwareAcceleration()
+
 async function createWindow(): Promise<BrowserWindow> {
 
   console.log("DIRNAME : " + __dirname)
