@@ -1,13 +1,61 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
+import { createConnection, getConnectionManager } from 'typeorm'
+import { Authentification } from '../src/app/core/models/auth.schema';
+
+const log = require('electron-log');
 
 let win: BrowserWindow = null;
+let authRepo = null
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
 
-function createWindow(): BrowserWindow {
+async function createWindow(): Promise<BrowserWindow> {
+
+  console.log("DIRNAME : " + __dirname)
+  var connection = null
+  try {
+     connection = await createConnection({
+      name: "connection",
+      type: 'sqlite',
+      synchronize: false,
+      logging: 'all',
+      logger: 'advanced-console',
+      // TODO if dev src else dist
+      database: './dist/assets/data/database.sqlite',
+      entities: [Authentification],
+    
+      // migrations: [
+      //   "../src/migration/*{.ts,.js}"
+      // ],
+      // cli: {
+      //   migrationsDir: "../src/migration"
+      // },
+      // migrationsRun: true,
+    })
+    log.info("DATABASE CONNECTION OK")
+  } catch (e) {
+    log.warn('[EXCEPTION WHILE TERMINATING APPLICATION CONTEXT]', e);
+    console.log('[EXCEPTION WHILE TERMINATING APPLICATION CONTEXT]', e);
+     // If AlreadyHasActiveConnectionError occurs, return already existing connection
+     if (e.name === "AlreadyHasActiveConnectionError") {
+      const existentConn = getConnectionManager().get("connection");
+      connection = existentConn;
+   }
+  }
+
+  try {
+    await connection.query('PRAGMA foreign_keys=OFF');
+    await connection.synchronize();
+    await connection.query('PRAGMA foreign_keys=ON');
+ 
+    authRepo = connection.getRepository(Authentification);
+  } catch (e){
+    console.log("EXCEPTION : ", e)
+    log.warn("EXCEPTION : ", e.json)
+  }
 
   const electronScreen = screen;
   const size = electronScreen.getPrimaryDisplay().workAreaSize;
@@ -55,6 +103,37 @@ function createWindow(): BrowserWindow {
     // when you should delete the corresponding element.
     win = null;
   });
+
+  
+  // -------------------------- AUTHENTIFICATION --------------------------
+  ipcMain.on('get-all-auth', async (event: any) => {
+    try {
+      event.returnValue = await authRepo.find();
+
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-auth-by-identifiant', async (event: any, _identifiant: string) => {
+    try {
+      event.returnValue = await authRepo.findOne({ where: { identifiant: _identifiant } });
+
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('add-authentification', async (event: any, _authentification : typeof Authentification) => {
+    try {
+      const item = await authRepo.create(_authentification);
+      await authRepo.save(item);
+      event.returnValue = await authRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
 
   return win;
 }
