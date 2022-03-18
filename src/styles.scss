@@ -1,9 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
-/*@import "~bootstrap/dist/css/bootstrap.css";
+@import "~bootstrap/dist/css/bootstrap.css";
 @import "~@ng-select/ng-select/themes/material.theme.css";
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300&display=swap");
 @import "~bootstrap/scss/bootstrap";
-*/
 
 *,
 *::before,
@@ -109,7 +108,6 @@ body app-root app-navigation mat-sidenav-container mat-sidenav {
   visibility: hidden;
 }
 
-
 // @media print {
 //   .mat-drawer-content{
 //     display: none;
@@ -147,7 +145,6 @@ body app-root app-navigation mat-sidenav-container mat-sidenav {
 
 // }
 //}
-
 
 /* Styles for tab labels */
 .mat-tab-label {

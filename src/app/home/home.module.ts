@@ -14,23 +14,26 @@ import { UserGuideComponent } from '../user-guide/user-guide.component';*/
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
 import { CommonModule, DatePipe } from '@angular/common';
-/*import { MatButtonModule } from '@angular/material/button';
+
+// Matrial components
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatSortModule } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatMenuModule } from '@angular/material/menu'
-import { MatDatepickerModule } from '@angular/material/datepicker'
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatMomentDateModule } from "@angular/material-moment-adapter";
+//import { MatInputModule } from '@angular/material/input';
+//import { MatListModule } from '@angular/material/list';
+//import { MatPaginatorModule } from '@angular/material/paginator';
+//import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+//import { MatRadioModule } from '@angular/material/radio';
+//import { MatSidenavModule } from '@angular/material/sidenav';
+//import { MatSortModule } from '@angular/material/sort';
+//import { MatTableModule } from '@angular/material/table';
+//import { MatToolbarModule } from '@angular/material/toolbar';
+//import { MatMenuModule } from '@angular/material/menu'
+//import { MatDatepickerModule } from '@angular/material/datepicker'
+//import { MatNativeDateModule } from '@angular/material/core';
+/*import { MatMomentDateModule } from "@angular/material-moment-adapter";
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { FlatpickrModule } from 'angularx-flatpickr';
@@ -73,11 +76,14 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     ReactiveFormsModule,
     FormsModule,
 
-   /* MatToolbarModule,
-    MatMenuModule,
+    MatToolbarModule,
     MatButtonModule,
-    MatSidenavModule,
     MatIconModule,
+    MatDialogModule,
+    MatExpansionModule,
+
+    /*MatMenuModule,
+    MatSidenavModule,
     MatDatepickerModule,MatNativeDateModule, MatMomentDateModule,
     MatListModule,
     MatTableModule, 
@@ -85,10 +91,8 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     MatPaginatorModule, 
     MatSortModule, 
     MatProgressSpinnerModule,
-    
     //FullCalendarModule,
-    MatDialogModule,
-    MatExpansionModule,MatRadioModule,
+    MatRadioModule,
     FlatpickrModule.forRoot(),
     CalendarModule.forRoot({
       provide: DateAdapter,
