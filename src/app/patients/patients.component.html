@@ -1,0 +1,136 @@
+<button mat-raised-button class="btn btn-info" (click)="displayPatientForm(true)"> Ajouter un patient </button>
+
+<form [formGroup]="patientForm" (ngSubmit)="onSubmit()" *ngIf="displayForm">
+  <div class="row">
+    <div class="col-10">
+      <h4 *ngIf="updatingPatient">Modifier un patient</h4>
+    </div>
+    <div class="col-2">
+      <button type="button" class="btn btn-link" (click)="clearPatientForm()">Fermer</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm">
+      <label for="firstname">Prénom : </label>
+      <input type="text" id="firstname" class="form-control" formControlName="firstname">
+    </div>
+    <div class="col-sm">
+      <label for="lastname">Nom : </label>
+      <input type="text" id="lastname" class="form-control" formControlName="lastname">
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-sm">
+      <label for="phoneNumber">Téléphone : </label>
+      <input type="tel" id="phoneNumber" class="form-control" formControlName="phoneNumber">
+    </div>
+    <div class="col-sm">
+      <label for="email">Email : </label>
+      <input type="email" id="email" class="form-control" formControlName="email">
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col">
+      <label for="address">Adresse : </label>
+      <input type="text" id="address" class="form-control" formControlName="address">
+    </div>
+    <div class="col">
+      <label for="comment">Pathologie / Caractéristiques physiques : </label>
+      <input type="text" id="firstname" class="form-control" formControlName="comment">
+    </div>  
+
+  </div>
+  
+
+  <div style="color:red" *ngIf="!patientForm.valid && patientForm.touched">
+    Veuillez rentrer des valeurs valides.
+  </div>
+  <button mat-raised-button type="submit" class="btn btn-info" [disabled]="!patientForm.valid">Valider</button>
+
+</form>
+
+<div class="example-container mat-elevation-z8">
+
+  <table mat-table [dataSource]="dataSource" class="lessons-table mat-elevation-z8">
+
+    <!-- Id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> No. </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="firstname">
+      <th mat-header-cell *matHeaderCellDef> Prénom </th>
+      <td mat-cell *matCellDef="let element"> {{element.firstname}} </td>
+    </ng-container>
+
+    <!-- Lastname Column -->
+    <ng-container matColumnDef="lastname">
+      <th mat-header-cell *matHeaderCellDef> Nom </th>
+      <td mat-cell *matCellDef="let element"> {{element.lastname}} </td>
+    </ng-container>
+
+    <!-- Address Column -->
+    <ng-container matColumnDef="address">
+      <th mat-header-cell *matHeaderCellDef> Adresse </th>
+      <td mat-cell *matCellDef="let element"> {{element.address}} </td>
+    </ng-container>
+
+    <!-- Phone number Column -->
+    <ng-container matColumnDef="phoneNumber">
+      <th mat-header-cell *matHeaderCellDef> Téléphone </th>
+      <td mat-cell *matCellDef="let element"> {{element.phoneNumber}} </td>
+    </ng-container>
+
+    <!-- Email Column -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef> Email </th>
+      <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+    </ng-container>
+
+    <!-- Email Column -->
+    <ng-container matColumnDef="comment">
+      <th mat-header-cell *matHeaderCellDef> Caractéristiques </th>
+      <td mat-cell *matCellDef="let element"> {{element.comment}} </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions" style="min-width: 60px;">
+      <th mat-header-cell *matHeaderCellDef>Editer / Supprimer</th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-flat-button (click)="editPatient(element)"> <mat-icon color="transparent" [ngStyle]="{'color':'#1e90ff'}">edit</mat-icon></button>`
+        <button mat-flat-button (click)="deletePatient(element)"><mat-icon [ngStyle]="{'color':'red'}">delete</mat-icon></button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+
+  </table>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Supprimer un patient</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Etes-vous sûr de vouloir supprimer le patient ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-prim" data-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-danger">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

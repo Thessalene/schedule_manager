@@ -18,6 +18,9 @@ import { UserGuideComponent } from '../user-guide/user-guide.component';*/
 
 // Services
 import { DriverService } from '../core/services/driver.service';
+import { EventService } from '../core/services/event.service';
+import { PatientService } from '../core/services/patient.service';
+import { PlaceService } from '../core/services/place.service';
 
 // Modules
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
@@ -30,6 +33,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTableModule } from '@angular/material/table';
+import { PatientsComponent } from '../patients/patients.component';
+import { PlacesComponent } from '../places/places.component';
+
 //import { MatInputModule } from '@angular/material/input';
 //import { MatListModule } from '@angular/material/list';
 //import { MatPaginatorModule } from '@angular/material/paginator';
@@ -37,7 +44,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 //import { MatRadioModule } from '@angular/material/radio';
 //import { MatSidenavModule } from '@angular/material/sidenav';
 //import { MatSortModule } from '@angular/material/sort';
-//import { MatTableModule } from '@angular/material/table';
 //import { MatToolbarModule } from '@angular/material/toolbar';
 //import { MatMenuModule } from '@angular/material/menu'
 //import { MatDatepickerModule } from '@angular/material/datepicker'
@@ -77,7 +83,7 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
   interactionPlugin, dayGridPlugin, bootstrapPlugin, listPlugin,timeGridPlugin
 ]);*/
 @NgModule({
-  declarations: [HomeComponent, BottomNavComponent, DataComponent, DriversComponent, /*PatientsComponent, CalendarComponent, PlacesComponent, EventComponent, AdvancedComponent, UserGuideComponent,
+  declarations: [HomeComponent, BottomNavComponent, DataComponent, DriversComponent, PatientsComponent, PlacesComponent /*CalendarComponent, PlacesComponent, EventComponent, AdvancedComponent, UserGuideComponent,
   AbsenceComponent, DataComponent, AbsenceTabsComponent, AbsenceInputComponent, AbsenceStatsComponent, AbsenceRecapComponent*/],
   imports: [
     CommonModule,
@@ -90,7 +96,8 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     MatIconModule,
     MatDialogModule,
     MatExpansionModule,
-    MatTabsModule
+    MatTabsModule,
+    MatTableModule
 
     /*MatMenuModule,
     MatSidenavModule,
@@ -116,7 +123,7 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     ScrollingModule,
     ChartsModule*/
   ],
-  providers: [DriverService, /*PatientService, EventService, PlaceService, AbsenceService,*/ DatePipe],
+  providers: [DriverService, PatientService, EventService, PlaceService, /*AbsenceService,*/ DatePipe],
 
   exports: [ReactiveFormsModule]
 })
