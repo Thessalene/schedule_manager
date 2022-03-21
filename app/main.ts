@@ -1,5 +1,6 @@
 import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
+import * as fs from 'fs';
 import * as url from 'url';
 import { createConnection, getConnectionManager, Between } from 'typeorm'
 import { Authentification } from '../src/app/core/models/auth.schema';
@@ -97,8 +98,16 @@ async function createWindow(): Promise<BrowserWindow> {
     });
     win.loadURL('http://localhost:4200');
   } else {
+      // Path when running electron executable
+      let pathIndex = './index.html';
+
+      if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
+          // Path when running electron in local folder
+        pathIndex = '../dist/index.html';
+      }
+    
     win.loadURL(url.format({
-      pathname: path.join(__dirname, 'dist/index.html'),
+      pathname: path.join(__dirname, pathIndex),
       protocol: 'file:',
       slashes: true
     }));
