@@ -2,7 +2,12 @@ import { NgModule } from '@angular/core';
 
 import { HomeRoutingModule } from './home-routing.module';
 
+// Components
 import { HomeComponent } from './home.component';
+import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
+import { DataComponent } from '../data/data.component';
+import { DriversComponent } from '../drivers/drivers.component';
+
 /*import { AdvancedComponent } from '../advanced/advanced.component';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { DriversComponent } from '../drivers/drivers.component';
@@ -11,16 +16,20 @@ import { PatientsComponent } from '../patients/patients.component';
 import { PlacesComponent } from '../places/places.component';
 import { UserGuideComponent } from '../user-guide/user-guide.component';*/
 
+// Services
+import { DriverService } from '../core/services/driver.service';
+
+// Modules
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
 import { CommonModule, DatePipe } from '@angular/common';
 
-// Matrial components
+// Material modules
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTabsModule } from '@angular/material/tabs';
 //import { MatInputModule } from '@angular/material/input';
 //import { MatListModule } from '@angular/material/list';
 //import { MatPaginatorModule } from '@angular/material/paginator';
@@ -68,7 +77,7 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
   interactionPlugin, dayGridPlugin, bootstrapPlugin, listPlugin,timeGridPlugin
 ]);*/
 @NgModule({
-  declarations: [HomeComponent, BottomNavComponent, /*DriversComponent, PatientsComponent, CalendarComponent, PlacesComponent, EventComponent, AdvancedComponent, UserGuideComponent,
+  declarations: [HomeComponent, BottomNavComponent, DataComponent, DriversComponent, /*PatientsComponent, CalendarComponent, PlacesComponent, EventComponent, AdvancedComponent, UserGuideComponent,
   AbsenceComponent, DataComponent, AbsenceTabsComponent, AbsenceInputComponent, AbsenceStatsComponent, AbsenceRecapComponent*/],
   imports: [
     CommonModule,
@@ -81,6 +90,7 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     MatIconModule,
     MatDialogModule,
     MatExpansionModule,
+    MatTabsModule
 
     /*MatMenuModule,
     MatSidenavModule,
@@ -106,7 +116,7 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     ScrollingModule,
     ChartsModule*/
   ],
-  providers: [/*DriverService, PatientService, EventService, PlaceService, AbsenceService,*/ DatePipe],
+  providers: [DriverService, /*PatientService, EventService, PlaceService, AbsenceService,*/ DatePipe],
 
   exports: [ReactiveFormsModule]
 })

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home.component';
 import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
+import { DataComponent } from '../data/data.component';
 /*import { AdvancedComponent } from '../advanced/advanced.component';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { PatientsComponent } from '../patients/patients.component';
@@ -30,11 +31,11 @@ const routes: Routes = [
         path: 'home',
         component: HomeComponent
       },
-      /*{
+      {
         path: 'data',
         component: DataComponent
       },
-      {
+      /*{
         path: 'absence-tabs',
         component: AbsenceTabsComponent
       },

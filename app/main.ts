@@ -1,14 +1,23 @@
 import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
-import * as fs from 'fs';
 import * as url from 'url';
-import { createConnection, getConnectionManager } from 'typeorm'
+import { createConnection, getConnectionManager, Between } from 'typeorm'
 import { Authentification } from '../src/app/core/models/auth.schema';
+import { Driver } from '../src/app/core/models/driver.schema';
+import { Patient } from '../src/app/core/models/patient.schema';
+import { Evenement } from '../src/app/core/models/evenement.schema';
+import { Place } from '../src/app/core/models/place.schema';
+import { Absence } from '../src/app/core/models/absence.schema';
 
 const log = require('electron-log');
 
 let win: BrowserWindow = null;
 let authRepo = null
+let eventRepo = null
+let driverRepo = null
+let patientRepo = null
+let placeRepo = null
+let absenceRepo = null
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
 
@@ -27,7 +36,7 @@ async function createWindow(): Promise<BrowserWindow> {
       logger: 'advanced-console',
       // TODO if dev src else dist
       database: './dist/assets/data/database.sqlite',
-      entities: [Authentification],
+      entities: [Authentification, Evenement, Driver, Patient, Place, Absence],
     
       // migrations: [
       //   "../src/migration/*{.ts,.js}"
@@ -54,6 +63,11 @@ async function createWindow(): Promise<BrowserWindow> {
     await connection.query('PRAGMA foreign_keys=ON');
  
     authRepo = connection.getRepository(Authentification);
+    eventRepo = connection.getRepository(Evenement);
+    driverRepo = connection.getRepository(Driver);
+    patientRepo = connection.getRepository(Patient);
+    placeRepo = connection.getRepository(Place);
+    absenceRepo = connection.getRepository(Absence);
   } catch (e){
     console.log("EXCEPTION : ", e)
     log.warn("EXCEPTION : ", e.json)
@@ -83,16 +97,8 @@ async function createWindow(): Promise<BrowserWindow> {
     });
     win.loadURL('http://localhost:4200');
   } else {
-    // Path when running electron executable
-    let pathIndex = './index.html';
-
-    if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-       // Path when running electron in local folder
-      pathIndex = '../dist/index.html';
-    }
-
     win.loadURL(url.format({
-      pathname: path.join(__dirname, pathIndex),
+      pathname: path.join(__dirname, 'dist/index.html'),
       protocol: 'file:',
       slashes: true
     }));
@@ -136,6 +142,386 @@ async function createWindow(): Promise<BrowserWindow> {
     }
   });
 
+  // -------------------------- DRIVER --------------------------
+  ipcMain.on('add-driver', async (event: any, _driver: Driver) => {
+    try {
+      const item = await driverRepo.create(_driver);
+      await driverRepo.save(item);
+      event.returnValue = await driverRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('update-driver', async (event: any, _driver: Driver) => {
+
+    try {
+      let driverToUpdate = await driverRepo.findOne(_driver.id);
+      driverToUpdate.firstname = _driver.firstname;
+      driverToUpdate.lastname = _driver.lastname;
+      driverToUpdate.email = _driver.email;
+      driverToUpdate.phoneNumber = _driver.phoneNumber;
+      driverToUpdate.comment = _driver.comment;
+      driverToUpdate.color = _driver.color;
+      driverToUpdate.absences = _driver.absences;
+      driverToUpdate.evenements = _driver.evenements;
+      await driverRepo.save(driverToUpdate);
+      event.returnValue = await driverRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('delete-driver', async (event: any, _driver: Driver) => {
+    try {
+      const item = await driverRepo.create(_driver);
+      await driverRepo.remove(item);
+      event.returnValue = await driverRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-drivers', async (event: any, ...args: any[]) => {
+    try {
+      event.returnValue = await driverRepo.find({
+        relations: ['absences']
+      })
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-driver-by-id', async (event: any, _driverId: number) => {
+    try {
+      event.returnValue = await driverRepo.findOne({ where: { id: _driverId } });
+
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  // -------------------------- ABSENCES --------------------------
+
+  ipcMain.on('get-all-absences', async (event: any, ...args: any[]) => {
+    try {
+      event.returnValue = await absenceRepo.find({
+        relations: ['driver']
+      })
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-all-absences-by-year', async (event: any, year: string) => {
+    try {
+      event.returnValue = await absenceRepo.find({
+        relations: ['driver'],
+        where: [
+          { startDate: Between('01/01/'+year , '31/12/'+year )},
+          { endDate: Between('01/01/'+year , '31/12/'+year )},
+        ]
+      })
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('add-absence', async (event: any, _absence: Absence) => {
+    try {
+      const absence = new Absence( _absence.startDate,  _absence.endDate, _absence.reason);
+      absence.driver = _absence.driver;
+      //absence.reason = _absence.reason;
+      //absence.driverId = _absence.driver.id
+      await absenceRepo.save(absence);
+
+      event.returnValue = await absenceRepo.find({
+        relations: ['driver'], where: {
+          driver: {
+            id: _absence.driver.id
+          }
+        }
+      });
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('update-absence', async (event: any, _absence: Absence) => {
+
+    try {
+      let absenceToUpdate = await absenceRepo.findOne(_absence.id);
+      absenceToUpdate.startDate = _absence.startDate;
+      absenceToUpdate.endDate = _absence.endDate;
+      absenceToUpdate.driver = _absence.driver;
+      absenceToUpdate.reason = _absence.reason;
+      await absenceRepo.save(absenceToUpdate);
+      event.returnValue = await absenceRepo.find({
+        relations: ["driver"]
+      });
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('delete-absence', async (event: any, _absenceId: number) => {
+    try {
+      await absenceRepo.delete(_absenceId);
+      event.returnValue = await absenceRepo.find({
+        relations: ["driver"]
+      });
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  // -------------------------- EVENT --------------------------
+
+  ipcMain.on('add-event', async (event: any, _evenement: Evenement) => {
+    try {
+      const evenement = new Evenement();
+      evenement.title = _evenement.title;
+      evenement.date = _evenement.date;
+      evenement.startPoint = _evenement.startPoint;
+      evenement.startHour = _evenement.startHour;
+      evenement.endPoint = _evenement.endPoint;
+      evenement.endHour = _evenement.endHour;
+      evenement.patient = _evenement.patient;
+      evenement.driver = _evenement.driver;
+      await eventRepo.save(evenement);
+
+      //const item = await eventRepo.create(_evenement);
+      //await eventRepo.save(item);
+      event.returnValue = await eventRepo.find({
+        relations: ['driver', 'patient', 'startPoint', 'endPoint'],
+      });
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('add-event-and-get-id', async (event: any, _evenement: Evenement) => {
+    try {
+      const evenement = new Evenement();
+      evenement.title = _evenement.title;
+      evenement.date = _evenement.date;
+      evenement.startPoint = _evenement.startPoint;
+      evenement.startHour = _evenement.startHour;
+      evenement.endPoint = _evenement.endPoint;
+      evenement.endHour = _evenement.endHour;
+      evenement.patient = _evenement.patient;
+      evenement.driver = _evenement.driver;
+      var newEventId;
+      await eventRepo.save(evenement).then(evenement => {
+        console.log("Event has been saved. Event id is", evenement.id);
+        newEventId = evenement.id;
+      });;
+      const eventList = await eventRepo.find({
+        relations: ['driver', 'patient', 'startPoint', 'endPoint'],
+      });
+
+      //const item = await eventRepo.create(_evenement);
+      //await eventRepo.save(item);
+      event.returnValue = [newEventId, eventList]
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-event-by-id', async (event: any, _eventId: number) => {
+    try {
+
+      event.returnValue = await eventRepo.findOne({ relations: ["patient", "driver", "startPoint", "endPoint"], where: { id: _eventId } });
+
+    } catch (err) {
+      console.log("ERREUR " + err);
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-event-by-driver-id', async (event: any, _driverId: number) => {
+    try {
+      event.returnValue = await eventRepo.find({
+        relations: ["patient", "driver", "startPoint", "endPoint"], where: {
+          driver: {
+            id: _driverId
+          }
+        }
+      });
+
+    } catch (err) {
+      console.log("ERREUR " + err);
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-events-on-period', async (event: any, _startDate: string, _endDate : string) => {
+    try {
+      event.returnValue = await eventRepo.find({
+        relations: ["patient", "driver", "startPoint", "endPoint"],
+          where: [
+            { date: Between(_startDate , _endDate)},
+          ]
+      });
+
+    } catch (err) {
+      console.log("ERREUR " + err);
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-events', async (event: any) => {
+    try {
+      event.returnValue = await eventRepo.find({
+        relations: ["patient", "driver", "startPoint", "endPoint"]
+      })
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('delete-event', async (event: any, _evenId: number) => {
+    try {
+      await eventRepo.delete(_evenId);
+      event.returnValue = await eventRepo.find({
+        relations: ["patient", "driver", "startPoint", "endPoint"]
+      });
+    } catch (err) {
+      throw err;
+    }
+  });
+
+
+
+  ipcMain.on('update-event', async (event: any, _event: Evenement) => {
+
+    try {
+      let eventToUpdate = await eventRepo.findOne(_event.id);
+      eventToUpdate.title = _event.title;
+      eventToUpdate.driver = _event.driver;
+      eventToUpdate.patient = _event.patient;
+      eventToUpdate.startPoint = _event.startPoint;
+      eventToUpdate.startHour = _event.startHour;
+      eventToUpdate.endPoint = _event.endPoint;
+      eventToUpdate.endHour = _event.endHour;
+      eventToUpdate.date = _event.date;
+      await eventRepo.save(eventToUpdate);
+      event.returnValue = await eventRepo.find({
+        relations: ["patient", "driver", "startPoint", "endPoint"]
+      });
+    } catch (err) {
+      throw err;
+    }
+  });
+  // -------------------------- PATIENTS --------------------------
+  ipcMain.on('add-patient', async (event: any, _patient: Patient) => {
+    try {
+      const item = await patientRepo.create(_patient);
+      await patientRepo.save(item);
+      event.returnValue = await patientRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('delete-patient', async (event: any, _patient: Patient) => {
+    try {
+      const item = await patientRepo.create(_patient);
+      await patientRepo.remove(item);
+      event.returnValue = await patientRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-patients', async (event: any, ...args: any[]) => {
+    try {
+      event.returnValue = await patientRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-patient-by-id', async (event: any, _patientId: number) => {
+    try {
+      event.returnValue = await patientRepo.findOne({ where: { id: _patientId } });
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('update-patient', async (event: any, _patient: Patient) => {
+
+    try {
+      let patientToUpdate = await patientRepo.findOne(_patient.id);
+      patientToUpdate.firstname = _patient.firstname;
+      patientToUpdate.lastname = _patient.lastname;
+      patientToUpdate.email = _patient.email;
+      patientToUpdate.phoneNumber = _patient.phoneNumber;
+      patientToUpdate.address = _patient.address;
+      patientToUpdate.comment = _patient.comment;
+      await patientRepo.save(patientToUpdate);
+      event.returnValue = await patientRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+
+  // -------------------------- PLACES --------------------------
+
+  ipcMain.on('get-places', async (event: any, ...args: any[]) => {
+    try {
+      event.returnValue = await placeRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('get-place-by-id', async (event: any, _placeId: number) => {
+    try {
+      event.returnValue = await placeRepo.findOne({ where: { id: _placeId } });
+
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('add-place', async (event: any, _place: Place) => {
+    try {
+      const item = await placeRepo.create(_place);
+      await placeRepo.save(item);
+      event.returnValue = await placeRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('update-place', async (event: any, _place: Place) => {
+
+    try {
+      let placeToUpdate = await placeRepo.findOne(_place.id);
+      placeToUpdate.label = _place.label;
+      placeToUpdate.postCode = _place.postCode;
+      placeToUpdate.country = _place.country;
+      await placeRepo.save(placeToUpdate);
+      event.returnValue = await placeRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  ipcMain.on('delete-place', async (event: any, _place: Place) => {
+    try {
+      const item = await placeRepo.create(_place);
+      await placeRepo.remove(item);
+      event.returnValue = await placeRepo.find();
+    } catch (err) {
+      throw err;
+    }
+  });
+
+  // ---------------- End listeners ---------------------
 
   return win;
 }
